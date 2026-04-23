@@ -4,7 +4,7 @@
 
 
 int linear_search(algobox::vector<int>& v, int target){
-    algobox::tracker loop(v);
+    algobox::tracker<int> loop(v);
     for (int i=0; i<v.size(); i++){
         if (v[i] == target) return i;
         loop++;
