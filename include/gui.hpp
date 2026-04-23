@@ -34,7 +34,6 @@ bool draw_rectangles(const algobox::vector<T>& v,
             }
             else{
                 rectangle_color = RED;
-                if (current_idx==v.size()-1) target_reached = true;
             }
         } else{
             rectangle_color = BLUE;
@@ -59,6 +58,9 @@ void screen_search(algobox::vector<T>& v, T target){
 
     bool target_reached = false;
     while (!WindowShouldClose() && !target_reached){
+        if (v.nodes.empty()){
+            break;
+        }
         
         BeginDrawing();
         ClearBackground(RAYWHITE);
