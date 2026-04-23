@@ -7,6 +7,11 @@
 #include "algobox_vector.hpp"
 
 template <typename T>
+void draw_arrows(const algobox::vector<T>& v, const size_t& current_idx){
+
+}
+
+template <typename T>
 bool draw_rectangles(const algobox::vector<T>& v,
     const float& screen_height, const float& rectangle_width,
     const T& target, const size_t& current_idx, const T& maximum){
@@ -29,9 +34,9 @@ bool draw_rectangles(const algobox::vector<T>& v,
             }
             else{
                 rectangle_color = RED;
+                if (current_idx==v.size()-1) target_reached = true;
             }
-        }
-        else{
+        } else{
             rectangle_color = BLUE;
         }
 
@@ -51,7 +56,6 @@ void screen_search(algobox::vector<T>& v, T target){
     SetTargetFPS(60);
 
     T maximum = v.get_max();
-    size_t current_idx = 0;
 
     bool target_reached = false;
     while (!WindowShouldClose() && !target_reached){
@@ -60,12 +64,11 @@ void screen_search(algobox::vector<T>& v, T target){
         ClearBackground(RAYWHITE);
         
         target_reached = draw_rectangles(
-            v, screen_height, rectangle_width, target, current_idx, maximum);
+            v, screen_height, rectangle_width, target, v.nodes.front(), maximum);
             
         EndDrawing();
         v.nodes.pop();
-        
-        current_idx++;
+
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
