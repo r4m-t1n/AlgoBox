@@ -6,38 +6,21 @@
 #include <thread>
 
 namespace algobox{
+    
+    template <typename T>
+    class core;
+    
     template <typename T>
     struct tracker;
+    
     template <typename T>
     class vector;
-    class dict;
     
+    class dict;
+
     template <typename Func, typename... Args>
     auto algo_search(Func algorithm, Args&&... args);
 };
-
-template <typename T>
-void screen_search(algobox::vector<T>& v, T target);
-
-template <typename Func, typename... Args>
-auto algobox::algo_search(Func algorithm, Args&&... args){
-    auto result = algorithm(std::forward<Args>(args)...);
-
-    auto params = std::forward_as_tuple(std::forward<Args>(args)...);
-
-    using vector_type = std::decay_t<decltype(std::get<0>(params))>;
-    using T = typename vector_type::value_type;
-
-    algobox::vector<T>& v = std::get<0>(params);
-    auto target = std::get<1>(params);
-
-    std::thread gui_thread([&v, target](){
-        screen_search<T>(v, target);
-    });
-    gui_thread.detach();
-
-    return result;
-}
 
 class algobox::dict {
     public:
@@ -60,6 +43,46 @@ class algobox::dict {
         }
 
 };
+template <typename T>
+class algobox::core {
+    public:
+        using value_type = T;
+        algobox::vector<T> v;
+        algobox::dict vars;
+        algobox::tracker<T> loop;
+        core(const algobox::vector<T>& vector, const algobox::dict& dict) :
+            v(vector), vars(dict), loop(v, vars){}
+
+        core() : v(), vars(), loop(v, vars) {}
+        core<T>& operator= (const std::vector<T>& other){
+            v.data = other.data;
+            return *this;
+        }
+};
+
+template <typename T>
+void screen_search(algobox::core<T>& c, T target);
+
+template <typename Func, typename... Args>
+auto algobox::algo_search(Func algorithm, Args&&... args){
+    auto result = algorithm(std::forward<Args>(args)...);
+
+    auto params = std::forward_as_tuple(std::forward<Args>(args)...);
+
+    using first_arg = std::decay_t<std::tuple_element_t<0, std::tuple<Args...>>>;
+    using T = typename first_arg::value_type;
+
+    algobox::core<T>& c = std::get<0>(params);
+    auto target = std::get<1>(params);
+
+    std::thread gui_thread([&c, target](){
+        screen_search<T>(c, target);
+    });
+    gui_thread.detach();
+
+    return result;
+}
+
 
 template <typename T>
 class algobox::vector: public std::vector<T>{
@@ -99,6 +122,7 @@ template <typename T>
 class algobox::tracker{
     public:
         size_t loop_index = 0;
+        const size_t empty_element = static_cast<size_t>(-1);
 
         tracker(algobox::vector<T>& v, algobox::dict& kv):
             vector(v), vars(kv) {
@@ -122,15 +146,16 @@ class algobox::tracker{
         static inline algobox::dict dummy_dict;
 
         void add_empty_element(){
-            const size_t empty_element = static_cast<size_t>(-1);
             for (auto& [key, val]: vars.data){
-                val.push(empty_element);
+                if (val.empty())
+                    val.push(empty_element);
+                else
+                    val.push(val.back());
             }
             vector.nodes.push(empty_element);
         }
 
         void add_empty_element_v(){
-            const size_t empty_element = static_cast<size_t>(-1);
 
             vector.nodes.push(empty_element);
         }
