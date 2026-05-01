@@ -25,8 +25,6 @@ class algobox::core {
         algobox::vector<T> v;
         algobox::dict vars;
 
-        size_t loop = 0;
-
         const size_t empty_element = static_cast<size_t>(-1);
 
         core(const algobox::vector<T>& vector, const algobox::dict& dict);
@@ -38,10 +36,14 @@ class algobox::core {
 
         void operator++(int);
 
+        const size_t& loop = _loop;
+
     private:
         void add_empty_element();
 
         void add_empty_element_v();
+
+        size_t _loop = 0;
 };
 
 template <typename T>
@@ -69,7 +71,7 @@ algobox::core<T>& algobox::core<T>::operator=(const algobox::vector<T>& other){
 
 template <typename T>
 void algobox::core<T>::operator++(int){
-    loop++;            
+    _loop++;
     add_empty_element();
 }
 
