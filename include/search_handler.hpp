@@ -1,0 +1,24 @@
+#pragma once
+
+#include <thread>
+#include "algobox.hpp"
+
+template <typename Func, typename... Args>
+auto algobox::algo_search(Func algorithm, Args&&... args){
+    auto result = algorithm(std::forward<Args>(args)...);
+
+    auto params = std::forward_as_tuple(std::forward<Args>(args)...);
+
+    using first_arg = std::decay_t<std::tuple_element_t<0, std::tuple<Args...>>>;
+    using T = typename first_arg::value_type;
+
+    algobox::core<T>& c = std::get<0>(params);
+    auto target = std::get<1>(params);
+
+    std::thread gui_thread([&c, target](){
+        screen_search<T>(c, target);
+    });
+    gui_thread.detach();
+
+    return result;
+}
