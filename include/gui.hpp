@@ -2,6 +2,7 @@
 
 #include <thread>
 #include <chrono>
+#include <unordered_set>
 #include "raylib.h"
 #include "rlgl.h"
 #include "algobox.hpp"
@@ -29,9 +30,24 @@ void draw_arrows(const float posX, const float posY,
 }
 
 template <typename T>
-bool draw_rectangles(const algobox::core<T>& c,
+std::unordered_set<T> highlighted_indexes(algobox::core<T>& c){
+    std::unordered_set<T> highlights;
+    for (auto& [key, val]: c.vars.data){
+        size_t idx = val.front();
+        val.pop();
+        if (idx != c.empty_element)
+            highlights.insert(idx);
+    }
+    return highlights;
+}
+
+template <typename T>
+bool draw_rectangles(algobox::core<T>& c,
     const float screen_height, const float rectangle_width,
     const T target, const size_t current_idx, const T maximum){
+
+    std::unordered_set<T> highlights = highlighted_indexes(c);
+
     bool target_reached = false;
     for (size_t i=0; i<c.v.size(); i++){
         float rectangle_height = ((float)c.v.at(i)/maximum) * screen_height;
@@ -53,7 +69,11 @@ bool draw_rectangles(const algobox::core<T>& c,
                 rectangle_color = RED;
             }
             draw_arrows(posX, posY, rectangle_width, rectangle_color);
-        } else{
+        }
+        else if (highlights.find(i) != highlights.end()){
+            rectangle_color = YELLOW;
+        }
+        else{
             rectangle_color = BLUE;
         }
 
@@ -79,13 +99,13 @@ void screen_search(algobox::core<T>& c, const T target){
         if (c.v.nodes.empty()){
             break;
         }
-        
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
-        
+
         target_reached = draw_rectangles(
             c, screen_height, rectangle_width, target, c.v.nodes.front(), maximum);
-            
+
         EndDrawing();
         c.v.nodes.pop();
 
