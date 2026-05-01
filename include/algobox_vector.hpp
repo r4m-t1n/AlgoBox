@@ -26,6 +26,9 @@ class algobox::vector: public std::vector<T>{
         }
 
         T& operator[](size_t index){
+            if (nodes.empty()){
+                nodes.push(index);
+            }
             nodes.back() = index; // for now, to be implemented
             return std::vector<T>::operator[](index);
         }
