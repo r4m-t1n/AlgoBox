@@ -33,11 +33,11 @@ class algobox::vector: public std::vector<T>{
             if (index_1 >= this->size() || index_2 >= this->size())
                 return;
 
-            size_t tmp = this->at(index_1);
-            size_t tmp_2 = this->at(index_2);
+            T tmp = this->at(index_1);
+            T tmp_2 = this->at(index_2);
             this->at(index_1) = this->at(index_2);
             this->at(index_2) = tmp;
-            copies.emplace(std::vector<T>(*this), index_2, index_2, index_1); // green, red
+            copies.emplace(std::vector<T>(*this), index_2, index_1, index_2); // green, red
         }
 
         T& operator[](size_t index){
@@ -48,10 +48,12 @@ class algobox::vector: public std::vector<T>{
                     }
                     nodes.back() = index;
                     break;
-                
+
                 case SORT:
-                    size_t empty_element = static_cast<size_t>(-1);
-                    copies.emplace(std::vector<T>(*this), index, empty_element, empty_element);
+                    if (!copies.empty() && copies.back().index == index)
+                        break;
+                    copies.emplace(std::vector<T>(*this), index,
+                    algobox::core<T>::empty_element, algobox::core<T>::empty_element);
                     break;
             }
             return std::vector<T>::operator[](index);
