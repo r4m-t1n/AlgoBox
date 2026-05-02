@@ -98,7 +98,8 @@ algobox::core<T>& algobox::core<T>::operator=(const algobox::vector<T>& other){
 template <typename T>
 void algobox::core<T>::operator++(int){
     _loop++;
-    add_empty_element();
+    if (v.mode == SEARCH)
+        add_empty_element();
 }
 
 template <typename T>
