@@ -1,6 +1,5 @@
 #include <iostream>
-#include "algobox_vector.hpp"
-#include "gui.hpp"
+#include "algobox.hpp"
 
 
 int binary_search(algobox::core<int>& c, int target){
