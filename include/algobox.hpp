@@ -38,7 +38,7 @@ class algobox::core {
         algobox::vector<T> v;
         algobox::dict vars;
 
-        const size_t empty_element = static_cast<size_t>(-1);
+        inline static const size_t empty_element = static_cast<size_t>(-1);
 
         core(const algobox::vector<T>& vector, const algobox::dict& dict);
 
