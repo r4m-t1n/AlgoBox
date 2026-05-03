@@ -51,12 +51,10 @@ bool draw_rectangles_search(algobox::core<T>& c,
 
 template <typename T>
 void screen_search(algobox::core<T>& c, const T target){
-    const float screen_height = 720.0f;
-    const float screen_width = 720.0f;
 
-    const float rectangle_width = screen_width / c.v.size();
+    const float rectangle_width = c.screen_width / c.v.size();
 
-    InitWindow(screen_width, screen_height, "Search Algorithm");
+    InitWindow(c.screen_width, c.screen_height, "Search Algorithm");
     SetTargetFPS(60);
 
     T maximum = c.v.get_max();
@@ -71,12 +69,12 @@ void screen_search(algobox::core<T>& c, const T target){
         ClearBackground(RAYWHITE);
 
         target_reached = draw_rectangles_search(
-            c, screen_height, rectangle_width, target, c.v.nodes.front(), maximum);
+            c, c.screen_height, rectangle_width, target, c.v.nodes.front(), maximum);
 
         EndDrawing();
         c.v.nodes.pop();
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(c.time * 1000.0f)));
     }
 
     CloseWindow();

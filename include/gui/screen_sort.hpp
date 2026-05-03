@@ -44,12 +44,10 @@ void draw_rectangles_sort(algobox::core<T>& c,
 
 template <typename T>
 void screen_sort(algobox::core<T>& c){
-    const float screen_height = 720.0f;
-    const float screen_width = 720.0f;
 
-    const float rectangle_width = screen_width / c.v.size();
+    const float rectangle_width = c.screen_width / c.v.size();
 
-    InitWindow(screen_width, screen_height, "Sort Algorithm");
+    InitWindow(c.screen_width, c.screen_height, "Sort Algorithm");
     SetTargetFPS(60);
 
     T maximum = c.v.get_max();
@@ -65,14 +63,14 @@ void screen_sort(algobox::core<T>& c){
         algobox::State<T> frame = c.v.copies.front();
 
         draw_rectangles_sort(
-            c, screen_height, rectangle_width,
+            c, c.screen_height, rectangle_width,
             frame.data, frame.index, maximum,
             frame.swap_1, frame.swap_2);
 
         EndDrawing();
         c.v.copies.pop();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(c.time * 1000.0f)));
     }
 
     CloseWindow();
