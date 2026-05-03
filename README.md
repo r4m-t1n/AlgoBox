@@ -3,7 +3,7 @@
 ### General Rules
 
 *   **Data Structures**: Use `algobox::vector` instead of `std::vector`. This is already included in `algobox::core` as the member `v`.
-*   **Accessing Data**: Use `operator[]` (e.g., `v[i]`) to access elements. Avoid using `.at()` for now.
+*   **Accessing Data**: Use `operator[]` (e.g., `v[i]`) to access elements. Avoid using `.at()` if you want the rectangles be marked.
 *   **Execution**: Always call `std::cin.get()` or a similar function after `algobox::algo_search`. This keeps the program and GUI window open.
 
 ### Rules for Search Algorithms
@@ -36,11 +36,28 @@ c.vars["low"] = 0;
 c.vars["high"] = c.v.size() - 1;
 ```
 
+### Rules for Sort Algorithms
+
+#### Function Parameters
+Your sort functions must use this format:
+`sort_function(algobox::core<T>& c, ...)`
+
+#### Using swap()
+Using the `swap()` to highlight changed indices on the screen in green and red.
+*   Swapping elements manually is also allowed, but the rectangles will be marked in red only.
+
+**Example:**
+```cpp
+if (c.v[j] > c.v[j+1]){
+    c.v.swap(j, j+1);
+}
+```
+
+#### Updating the Tracker
+Updating the tracker is not necessary for the sorting algorithms, because each time an element is accessed or swaped, the whole vector state will be copied (and it is expensive).
+
 ### Rules for Tree Algorithms
 *(To be added)*
 
 ### Rules for Graph Algorithms
-*(To be added)*
-
-### Rules for Sort Algorithms
 *(To be added)*
