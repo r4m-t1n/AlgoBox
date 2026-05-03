@@ -15,6 +15,9 @@ auto algobox::algo_search(Func algorithm, Args&&... args){
     auto target = std::get<1>(params);
 
     c.v.mode = SEARCH;
+
+    if (c.v.size() > c.size_limit)
+        throw SizeLimitException(c.v.size(), c.size_limit);
     
     auto result = algorithm(std::forward<Args>(args)...);
 
@@ -37,6 +40,9 @@ auto algobox::algo_sort(Func algorithm, Args&&... args){
     algobox::core<T>& c = std::get<0>(params);
 
     c.v.mode = SORT;
+
+    if (c.v.size() > c.size_limit)
+        throw SizeLimitException(c.v.size(), c.size_limit);
 
     if constexpr (std::is_void_v<std::invoke_result_t<Func, Args...>>){
         algorithm(std::forward<Args>(args)...);
