@@ -38,12 +38,20 @@ auto algobox::algo_sort(Func algorithm, Args&&... args){
 
     c.v.mode = SORT;
 
-    auto result = algorithm(std::forward<Args>(args)...);
+    if constexpr (std::is_void_v<std::invoke_result_t<Func, Args...>>){
+        algorithm(std::forward<Args>(args)...);
+        std::thread gui_thread([&c](){
+            screen_sort<T>(c);
+        });
+        gui_thread.detach();
+    } else {
+        auto result = algorithm(std::forward<Args>(args)...);
 
-    std::thread gui_thread([&c](){
-        screen_sort<T>(c);
-    });
-    gui_thread.detach();
+        std::thread gui_thread([&c](){
+            screen_sort<T>(c);
+        });
+        gui_thread.detach();
 
-    return result;
+        return result;
+    }
 }
