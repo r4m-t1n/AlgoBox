@@ -1,8 +1,11 @@
+#pragma once
+
 #include <iostream>
 #include <string>
 
 namespace algobox {
     struct SizeLimitException;
+    struct NoAlgoModeSelected;
 }
 
 struct algobox::SizeLimitException : public std::exception {
@@ -16,8 +19,20 @@ struct algobox::SizeLimitException : public std::exception {
     }
 };
 
-algobox::SizeLimitException::SizeLimitException(const size_t cur, const size_t exp):
+inline algobox::SizeLimitException::SizeLimitException(const size_t cur, const size_t exp):
     current_size(cur), expected_size(exp){
         message = "[SizeLimitException]: Expected a vector of size: " + std::to_string(exp) +
                 " but current size is: " + std::to_string(cur);
 }
+
+struct algobox::NoAlgoModeSelected : public std::exception {
+    const char* message;
+    NoAlgoModeSelected();
+
+    virtual const char* what() const noexcept override {
+        return message;
+    }
+};
+
+inline algobox::NoAlgoModeSelected::NoAlgoModeSelected() :
+    message ("[NoAlgoModeSelected]: No algorithm mode has been chosen for this vector {search, sort, etc.}") {}
