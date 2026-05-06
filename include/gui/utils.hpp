@@ -5,7 +5,14 @@
 #include "rlgl.h"
 #include "algobox.hpp"
 
-void draw_arrows(const float posX, const float posY,
+inline size_t get_monitor_width(){
+    return static_cast<size_t>(GetMonitorWidth(GetCurrentMonitor()));
+}
+inline size_t get_monitor_height() {
+    return static_cast<size_t>(GetMonitorHeight(GetCurrentMonitor()));
+}
+
+inline void draw_arrows(const float posX, const float posY,
     const float rectangle_width, Color rectangle_color){
     float base_y = posY - 45.0f;
     float bisector_x = posX + ((rectangle_width - 1.0f)/2);
@@ -28,7 +35,7 @@ void draw_arrows(const float posX, const float posY,
 }
 
 template <typename T>
-std::unordered_set<T> highlighted_indexes(algobox::core<T>& c){
+inline std::unordered_set<T> highlighted_indexes(algobox::core<T>& c){
     std::unordered_set<T> highlights;
     for (auto& [key, val]: c.vars.data){
         size_t idx = val.front();
