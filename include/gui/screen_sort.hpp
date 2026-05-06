@@ -13,6 +13,8 @@ void draw_rectangles_sort(algobox::core<T>& c,
     const std::vector<T>& data, const size_t current_idx, const T maximum,
     const size_t green_swap, const size_t red_swap){
 
+    std::unordered_set<T> highlights = highlighted_indexes(c);
+
     for (size_t i=0; i<data.size(); i++){
         float rectangle_height = ((float)data[i]/maximum) * screen_height;
 
@@ -33,6 +35,9 @@ void draw_rectangles_sort(algobox::core<T>& c,
         else if (current_idx == i){
             rectangle_color = RED;
             draw_arrows(posX, posY, rectangle_width, rectangle_color);
+        }
+        else if (highlights.find(i) != highlights.end()){
+            rectangle_color = YELLOW;
         }
         else{
             rectangle_color = BLUE;
