@@ -6,6 +6,7 @@
 namespace algobox {
     struct SizeLimitException;
     struct NoAlgoModeSelected;
+    struct OutOfRange;
 }
 
 struct algobox::SizeLimitException : public std::exception {
@@ -36,3 +37,20 @@ struct algobox::NoAlgoModeSelected : public std::exception {
 
 inline algobox::NoAlgoModeSelected::NoAlgoModeSelected() :
     message ("[NoAlgoModeSelected]: No algorithm mode has been chosen for this vector {search, sort, etc.}") {}
+
+struct algobox::OutOfRange : public std::exception {
+    size_t wanted_index;
+    size_t valid_index;
+    std::string message;
+    OutOfRange(const size_t wanted_index, const size_t valid_index);
+
+    virtual const char* what() const noexcept override {
+        return message.c_str();
+    }
+};
+
+inline algobox::OutOfRange::OutOfRange(const size_t wanted, const size_t valid):
+    wanted_index(wanted), valid_index(valid){
+        message = "[OutOfRange]: The accessed index is out of range of this vector: " + std::to_string(wanted) +
+                " current size is: " + std::to_string(valid);
+}
