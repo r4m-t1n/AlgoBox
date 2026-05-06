@@ -17,9 +17,9 @@ class algobox::dict {
 
 };
 
-algobox::dict::dict(): data() {}
+inline algobox::dict::dict(): data() {}
 
-size_t& algobox::dict::operator[](const std::string& key){
+inline size_t& algobox::dict::operator[](const std::string& key){
     std::queue<size_t>& val = data[key];
     if (val.empty()){
         val.push(0);
@@ -27,7 +27,7 @@ size_t& algobox::dict::operator[](const std::string& key){
     return val.back();
 }
 
-const size_t algobox::dict::operator[](const std::string& key) const{
+inline const size_t algobox::dict::operator[](const std::string& key) const{
     if (data.find(key) == data.end() || data[key].empty())
         return 0;
     return data[key].back();
