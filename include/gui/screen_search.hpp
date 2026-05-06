@@ -63,6 +63,9 @@ void screen_search(algobox::core<T>& c, const T target){
     while (!WindowShouldClose() && !target_reached){
         if (c.v.nodes.empty()){
             break;
+        } else if (c.v.nodes.front() == c.empty_element){
+            c.v.nodes.pop();
+            continue;
         }
 
         BeginDrawing();
