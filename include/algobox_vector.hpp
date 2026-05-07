@@ -56,15 +56,15 @@ class algobox::vector{
 template <typename T>
 template <typename T2>
 algobox::vector<T>::vector(const T2 _vector_, const size_t _size_, const size_t _capacity_, const size_t _width_limit_) : 
-    _size(0), _capacity(_size_), _width_limit(_width_limit_/2) {
+    _size(_size_), _capacity(_size_), _width_limit(_width_limit_/2) {
     if (_capacity > _width_limit_){
-        throw SizeLimitException(_capacity_, _width_limit_);
+        throw algobox::SizeLimitException(_capacity_, _width_limit_);
     }
 
     data = new T[_capacity];
 
     for (size_t i=0; i<_size_; i++){
-        push_back(_vector_[i]);
+        data[i] = _vector_[i];
     }
 }
 
@@ -85,13 +85,13 @@ template <typename T>
 algobox::vector<T>::vector(const size_t _size_) :
     _size(_size_), _capacity(_size_), _width_limit(720/2) {
     if (_capacity > _width_limit){
-        throw SizeLimitException(_capacity, _width_limit);
+        throw algobox::SizeLimitException(_capacity, _width_limit);
     }
 
     data = new T[_capacity];
 
     for (size_t i=0; i<_size; i++){
-        push_back(0);
+        data[i] = 0;
     }
 }
 
@@ -144,16 +144,21 @@ algobox::vector<T>& algobox::vector<T>::operator=(vector<T>&& other) {
     }
     return *this;
 }
-        
+
 template <typename T>
 void algobox::vector<T>::push_back(T element){
-    if (_size+1>_width_limit){
-        if (_capacity+1 >= _width_limit){
-            throw SizeLimitException(_capacity+1, _width_limit);
+    if (_size == 0 || _capacity == 0){
+        _capacity = 1;
+        delete[] data;
+        data = new T[1];
+    }
+    else if (_size+1>_capacity){
+        if (_capacity+1 > _width_limit){
+            throw algobox::SizeLimitException(_capacity+1, _width_limit);
         }
 
         if (_capacity * 2 < _width_limit)
-            _capacity = (_capacity == 0) ? 1 : _capacity * 2;
+            _capacity = _capacity * 2;
         else
             _capacity = _width_limit;
 
@@ -211,7 +216,7 @@ T algobox::vector<T>::get_max(){
 template <typename T>
 T algobox::vector<T>::at(size_t index){
     if (index >= _size)
-        throw OutOfRange(index, _size);
+        throw algobox::OutOfRange(index, _size);
 
     return data[index];
 }
@@ -220,15 +225,15 @@ template <typename T>
 const T* algobox::vector<T>::get_data_ptr() const { return data;}
 
 template <typename T>
-void algobox::vector<T>::swap(size_t index_1, size_t index_2){
-    if (index_1 >= _size || index_2 >= _size)
-        return;
+void algobox::vector<T>::swap(size_t green_index, size_t red_index){
+    if (green_index >= _size || red_index >= _size)
+        throw algobox::OutOfRange(std::max(green_index, red_index), _size);
 
-    T tmp = data[index_1];
-    T tmp_2 = data[index_2];
-    data[index_1] = data[index_2];
-    data[index_2] = tmp;
-    copies.emplace(std::vector<T>(data, data + _size), index_2, index_1, index_2); // green, red
+    T tmp = data[green_index];
+    T tmp_2 = data[red_index];
+    data[green_index] = data[red_index];
+    data[red_index] = tmp;
+    copies.emplace(std::vector<T>(data, data + _size), algobox::core<T>::empty_element, green_index, red_index);
 }
 
 template <typename T>
