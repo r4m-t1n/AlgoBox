@@ -86,6 +86,8 @@ class algobox::core {
 
         void add_empty_element_v();
 
+        void add_empty_element_kv();
+
         size_t _loop = 0;
 };
 
@@ -177,7 +179,7 @@ void algobox::core<T>::operator++(int){
         add_empty_element();
     else if (v.mode == SORT){
         if (!vars.data.empty())
-            add_empty_element();
+            add_empty_element_kv();
     }
 }
 
@@ -190,6 +192,16 @@ void algobox::core<T>::add_empty_element(){
             val.push(val.back());
     }
     v.nodes.push(empty_element);
+}
+
+template <typename T>
+void algobox::core<T>::add_empty_element_kv(){
+    for (auto& [key, val]: vars.data){
+        if (val.empty())
+            val.push(empty_element);
+        else
+            val.push(val.back());
+    }
 }
 
 template <typename T>
