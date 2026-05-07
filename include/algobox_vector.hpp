@@ -39,6 +39,7 @@ class algobox::vector{
         size_t width_limit() const;
         bool empty() const;
         T get_max();
+        T get_min();
         T at(size_t index);
         void swap(size_t index_1, size_t index_2);
         const T* get_data_ptr() const;
@@ -56,7 +57,7 @@ class algobox::vector{
 template <typename T>
 template <typename T2>
 algobox::vector<T>::vector(const T2 _vector_, const size_t _size_, const size_t _capacity_, const size_t _width_limit_) : 
-    _size(_size_), _capacity(_size_), _width_limit(_width_limit_/2) {
+    _size(_size_), _capacity(_size_), _width_limit(_width_limit_) {
     if (_capacity > _width_limit_){
         throw algobox::SizeLimitException(_capacity_, _width_limit_);
     }
@@ -70,20 +71,20 @@ algobox::vector<T>::vector(const T2 _vector_, const size_t _size_, const size_t 
 
 template <typename T>
 algobox::vector<T>::vector(const T* _vector_, const size_t _size_) :
-    vector(_vector_, _size_, _size_, 720/2) {}
+    vector(_vector_, _size_, _size_, 720) {}
 
 
 template <typename T>
 algobox::vector<T>::vector(const std::initializer_list<T> _vector_) :
-    vector(_vector_.begin(), _vector_.size(), _vector_.size(), 720/2) {}
+    vector(_vector_.begin(), _vector_.size(), _vector_.size(), 720) {}
 
 template <typename T>
 algobox::vector<T>::vector(const std::vector<T>& _vector_) :
-    vector(_vector_.data(), _vector_.size(), _vector_.size(), 720/2) {}
+    vector(_vector_.data(), _vector_.size(), _vector_.size(), 720) {}
 
 template <typename T>
 algobox::vector<T>::vector(const size_t _size_) :
-    _size(_size_), _capacity(_size_), _width_limit(720/2) {
+    _size(_size_), _capacity(_size_), _width_limit(720) {
     if (_capacity > _width_limit){
         throw algobox::SizeLimitException(_capacity, _width_limit);
     }
@@ -96,7 +97,7 @@ algobox::vector<T>::vector(const size_t _size_) :
 }
 
 template <typename T>
-algobox::vector<T>::vector() : _size(0), _capacity(0), _width_limit(720/2), data(nullptr) {}
+algobox::vector<T>::vector() : _size(0), _capacity(0), _width_limit(720), data(nullptr) {}
 
 template <typename T>
 algobox::vector<T>::~vector(){
@@ -105,10 +106,12 @@ algobox::vector<T>::~vector(){
 
 template <typename T>
 algobox::vector<T>::vector(const vector<T>& other) :
-    vector(other.data, other._size, other._capacity, other._width_limit) {}
+    vector(other.data, other._size, other._capacity, other._width_limit) {
+    mode = other.mode;
+}
 
 template <typename T>
-algobox::vector<T>::vector(vector<T>&& other){
+algobox::vector<T>::vector(vector<T>&& other) : _size(0), _capacity(0), _width_limit(720), data(nullptr) {
     *this = std::move(other);
 }
 
@@ -117,6 +120,7 @@ algobox::vector<T>& algobox::vector<T>::operator=(const vector<T>& other) {
     if (this != &other){
         delete[] data;
 
+        mode = other.mode;
         _size = other._size;
         _capacity = other._capacity;
         _width_limit = other._width_limit;
@@ -133,6 +137,7 @@ algobox::vector<T>& algobox::vector<T>::operator=(vector<T>&& other) {
     if (this != &other){
         delete[] data;
 
+        mode = other.mode;
         data = other.data;
         _size = other._size;
         _capacity = other._capacity;
@@ -209,6 +214,18 @@ T algobox::vector<T>::get_max(){
     T m = data[0];
     for (int i=0; i<_size; i++){
         if (data[i] > m) m = data[i];
+    }
+    return m;
+}
+
+template <typename T>
+T algobox::vector<T>::get_min(){
+    if (this->empty())
+        return 0;
+
+    T m = data[0];
+    for (int i=0; i<_size; i++){
+        if (data[i] < m) m = data[i];
     }
     return m;
 }

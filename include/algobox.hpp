@@ -108,7 +108,7 @@ algobox::State<T>::State(const std::vector<T>& v, const size_t i, const size_t s
 template <typename T>
 algobox::core<T>::core(const algobox::vector<T>& vector, const algobox::dict& dict,
     const float height, const float width, const float loop_time) :
-    v(vector.get_data_ptr(), vector.size(), vector.capacity(), vector.width_limit()*2), vars(dict),
+    v(vector.get_data_ptr(), vector.size(), vector.capacity(), vector.width_limit()), vars(dict),
     screen_height(height), screen_width(width), size_limit(static_cast<size_t>(width/2.0)),
     time(loop_time){
         add_empty_element();
