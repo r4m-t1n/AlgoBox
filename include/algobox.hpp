@@ -18,6 +18,8 @@ namespace algobox{
 
     template <typename Func, typename... Args>
     auto algo_sort(Func algorithm, Args&&... args);
+
+    inline static const size_t empty_element = static_cast<size_t>(-1);
 };
 
 enum AlgoMode {
@@ -45,8 +47,6 @@ class algobox::core {
         const float screen_width;
 
         float time;
-
-        inline static const size_t empty_element = static_cast<size_t>(-1);
 
         core(const algobox::vector<T>& vector, const algobox::dict& dict,
             const float height, const float width, const float loop_time);
@@ -82,12 +82,6 @@ class algobox::core {
 
     private:
 
-        void add_empty_element();
-
-        void add_empty_element_v();
-
-        void add_empty_element_kv();
-
         size_t _loop = 0;
 };
 
@@ -111,7 +105,7 @@ algobox::core<T>::core(const algobox::vector<T>& vector, const algobox::dict& di
     v(vector.get_data_ptr(), vector.size(), vector.capacity(), vector.width_limit()), vars(dict),
     screen_height(height), screen_width(width), size_limit(static_cast<size_t>(width/2.0)),
     time(loop_time){
-        add_empty_element();
+        (*this)++;
 }
 
 template <typename T>
@@ -120,7 +114,7 @@ algobox::core<T>::core(const std::initializer_list<T>& vector, const algobox::di
     v(vector.begin(), vector.size(), vector.size(), width), vars(dict),
     screen_height(height), screen_width(width), size_limit(static_cast<size_t>(width/2.0)),
     time(loop_time){
-        add_empty_element();
+    (*this)++;
 }
 
 template <typename T>
@@ -129,7 +123,7 @@ algobox::core<T>::core(const std::vector<T>& vector, const algobox::dict& dict,
     v(vector, vector.size(), vector.capacity(), width), vars(dict),
     screen_height(height), screen_width(width), size_limit(static_cast<size_t>(width/2.0)),
     time(loop_time){
-        add_empty_element();
+    (*this)++;
 }
 
 template <typename T>
@@ -175,38 +169,14 @@ algobox::core<T>& algobox::core<T>::operator=(const algobox::vector<T>& other){
 template <typename T>
 void algobox::core<T>::operator++(int){
     _loop++;
-    if (v.mode == SEARCH)
-        add_empty_element();
+    if (v.mode == SEARCH){
+        v++;
+        vars++;
+    }
     else if (v.mode == SORT){
         if (!vars.data.empty())
-            add_empty_element_kv();
+            vars++;
     }
-}
-
-template <typename T>
-void algobox::core<T>::add_empty_element(){
-    for (auto& [key, val]: vars.data){
-        if (val.empty())
-            val.push(empty_element);
-        else
-            val.push(val.back());
-    }
-    v.nodes.push(empty_element);
-}
-
-template <typename T>
-void algobox::core<T>::add_empty_element_kv(){
-    for (auto& [key, val]: vars.data){
-        if (val.empty())
-            val.push(empty_element);
-        else
-            val.push(val.back());
-    }
-}
-
-template <typename T>
-void algobox::core<T>::add_empty_element_v(){
-    v.nodes.push(empty_element);
 }
 
 template <typename T>

@@ -11,6 +11,8 @@ class algobox::dict {
 
         dict();
 
+        void operator++(int);
+
         size_t& operator[](const std::string& key);
 
         const size_t operator[](const std::string& key) const;
@@ -18,6 +20,15 @@ class algobox::dict {
 };
 
 inline algobox::dict::dict(): data() {}
+
+inline void algobox::dict::operator++(int){
+    for (auto& [key, val]: data){
+        if (val.empty())
+            val.push(algobox::empty_element);
+        else
+            val.push(val.back());
+    }
+}
 
 inline size_t& algobox::dict::operator[](const std::string& key){
     std::queue<size_t>& val = data[key];

@@ -28,6 +28,7 @@ class algobox::vector{
 
         vector<T>& operator=(const vector<T>& other);
         vector<T>& operator=(vector<T>&& other);
+        void operator++(int);
 
         T& operator[](size_t index);
         const T& operator[](size_t index) const;
@@ -151,6 +152,11 @@ algobox::vector<T>& algobox::vector<T>::operator=(vector<T>&& other) {
 }
 
 template <typename T>
+void algobox::vector<T>::operator++(int){
+    nodes.push(algobox::empty_element);
+}
+
+template <typename T>
 void algobox::vector<T>::push_back(T element){
     if (_size == 0 || _capacity == 0){
         _capacity = 1;
@@ -250,7 +256,7 @@ void algobox::vector<T>::swap(size_t green_index, size_t red_index){
     T tmp_2 = data[red_index];
     data[green_index] = data[red_index];
     data[red_index] = tmp;
-    copies.emplace(std::vector<T>(data, data + _size), algobox::core<T>::empty_element, green_index, red_index);
+    copies.emplace(std::vector<T>(data, data + _size), algobox::empty_element, green_index, red_index);
 }
 
 template <typename T>
@@ -267,7 +273,7 @@ T& algobox::vector<T>::operator[](size_t index){
             if (!copies.empty() && copies.back().index == index)
                 break;
             copies.emplace(std::vector<T>(data, data + _size), index,
-                        algobox::core<T>::empty_element, algobox::core<T>::empty_element);
+                        algobox::empty_element, algobox::empty_element);
             break;
 
         default:
