@@ -23,6 +23,7 @@ namespace algobox{
 };
 
 enum AlgoMode {
+    NONE,
     SEARCH,
     SORT,
     TREE,
@@ -105,7 +106,8 @@ algobox::core<T>::core(const algobox::vector<T>& vector, const algobox::dict& di
     v(vector.get_data_ptr(), vector.size(), vector.capacity(), vector.width_limit()), vars(dict),
     screen_height(height), screen_width(width), size_limit(static_cast<size_t>(width/2.0)),
     time(loop_time){
-        (*this)++;
+        v++;
+        vars++;
 }
 
 template <typename T>
@@ -114,7 +116,8 @@ algobox::core<T>::core(const std::initializer_list<T>& vector, const algobox::di
     v(vector.begin(), vector.size(), vector.size(), width), vars(dict),
     screen_height(height), screen_width(width), size_limit(static_cast<size_t>(width/2.0)),
     time(loop_time){
-    (*this)++;
+    v++;
+    vars++;
 }
 
 template <typename T>
@@ -123,7 +126,8 @@ algobox::core<T>::core(const std::vector<T>& vector, const algobox::dict& dict,
     v(vector, vector.size(), vector.capacity(), width), vars(dict),
     screen_height(height), screen_width(width), size_limit(static_cast<size_t>(width/2.0)),
     time(loop_time){
-    (*this)++;
+    v++;
+    vars++;
 }
 
 template <typename T>
