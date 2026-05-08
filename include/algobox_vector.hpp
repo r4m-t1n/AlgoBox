@@ -58,7 +58,7 @@ class algobox::vector{
 template <typename T>
 template <typename T2>
 algobox::vector<T>::vector(const T2 _vector_, const size_t _size_, const size_t _capacity_, const size_t _width_limit_) : 
-    _size(_size_), _capacity(_size_), _width_limit(_width_limit_) {
+    _size(_size_), _capacity(_size_), _width_limit(_width_limit_), mode(AlgoMode::NONE) {
     if (_capacity > _width_limit_){
         throw algobox::SizeLimitException(_capacity_, _width_limit_);
     }
@@ -126,6 +126,11 @@ algobox::vector<T>& algobox::vector<T>::operator=(const vector<T>& other) {
         _capacity = other._capacity;
         _width_limit = other._width_limit;
 
+        nodes = other.nodes;
+        copies = other.copies;
+
+        data = new T[_capacity];
+
         for (size_t i=0; i<_size; i++){
             data[i] = other.data[i];
         }
@@ -144,6 +149,10 @@ algobox::vector<T>& algobox::vector<T>::operator=(vector<T>&& other) {
         _capacity = other._capacity;
         _width_limit = other._width_limit;
 
+        nodes = std::move(other.nodes);
+        copies = std::move(other.copies);
+
+        other.mode = AlgoMode::NONE;
         other.data = nullptr;
         other._size = 0;
         other._capacity = 0;
@@ -291,6 +300,14 @@ const T& algobox::vector<T>::operator[](size_t index) const{
             }
             nodes.back() = index;
             break;
+
+        case SORT:
+            if (!copies.empty() && copies.back().index == index)
+                break;
+            copies.emplace(std::vector<T>(data, data + _size), index,
+                        algobox::empty_element, algobox::empty_element);
+            break;
+
         default:
             throw algobox::NoAlgoModeSelected();
     }
