@@ -34,6 +34,7 @@ class algobox::vector{
         const T& operator[](size_t index) const;
 
         void push_back(T element);
+        void erase(size_t pos);
         void clear();
         size_t size() const;
         size_t capacity() const;
@@ -193,6 +194,25 @@ void algobox::vector<T>::push_back(T element){
     _size++;
 }
 
+template<typename T>
+void algobox::vector<T>::erase(size_t pos){
+    if (pos >= _size){
+        throw algobox::OutOfRange(pos, _size);
+    }
+    if (pos < _size - 1){
+        for (int i=pos; i<_size-1; i++){
+            data[i] = data[i+1];
+        }
+    }
+    data[_size-1] = 0;
+    _size--;
+
+    if (mode == SORT){
+        copies.emplace(std::vector<T>(data, data+_size), algobox::empty_element,
+                        pos, algobox::empty_element);
+    }
+}
+
 template <typename T>
 void algobox::vector<T>::clear(){
     delete[] data;
@@ -270,6 +290,9 @@ void algobox::vector<T>::swap(size_t green_index, size_t red_index){
 
 template <typename T>
 T& algobox::vector<T>::operator[](size_t index){
+    if (index >= _size)
+        throw algobox::OutOfRange(index, _size);
+
     switch (mode) {
         case SEARCH:
             if (nodes.empty()){
@@ -293,6 +316,9 @@ T& algobox::vector<T>::operator[](size_t index){
 
 template <typename T>
 const T& algobox::vector<T>::operator[](size_t index) const{
+    if (index >= _size)
+        throw algobox::OutOfRange(index, _size);
+
     switch (mode) {
         case SEARCH:
             if (nodes.empty()){

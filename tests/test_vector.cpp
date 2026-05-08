@@ -196,6 +196,28 @@ TEST(VectorTest, Maximum_Minimum){
     EXPECT_EQ(v.get_min(), 0);
 }
 
+TEST(VectorTest, Erase_Vector){
+    algobox::vector<int> v ({-20, -10, 0, 10, 20, 20, 40});
+    v.mode = SEARCH;
+
+    EXPECT_EQ(v[0], -20);
+    EXPECT_EQ(v.size(), 7);
+    v.erase(0);
+    EXPECT_EQ(v[0], -10);
+    EXPECT_EQ(v.size(), 6);
+
+    EXPECT_THROW(v.erase(10), algobox::OutOfRange);
+
+    while (!v.empty()){
+        v.erase(v.size()-1);
+    }
+
+    EXPECT_EQ(v.size(), 0);
+    
+    EXPECT_THROW(v[0], algobox::OutOfRange);
+    EXPECT_THROW(v.erase(0), algobox::OutOfRange);
+}
+
 
 TEST(VectorTest, Brackets){
     algobox::core<int> c({10, 20});
