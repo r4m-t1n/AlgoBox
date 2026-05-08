@@ -192,6 +192,9 @@ void algobox::vector<T>::push_back(T element){
     }
     data[_size] = element;
     _size++;
+    if (mode != NONE)
+        copies.emplace(std::vector<T>(data, data+_size), _size-1,
+                        algobox::empty_element, algobox::empty_element);
 }
 
 template<typename T>
