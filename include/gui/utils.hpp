@@ -40,7 +40,7 @@ inline std::unordered_set<T> highlighted_indexes(algobox::core<T>& c){
     for (auto& [key, val]: c.vars.data){
         size_t idx = val.front();
         val.pop();
-        if (idx != c.empty_element)
+        if (idx != algobox::empty_element)
             highlights.insert(idx);
     }
     return highlights;
