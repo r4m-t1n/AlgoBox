@@ -69,6 +69,8 @@ class algobox::core {
         core(const algobox::vector<T>& vector, const float loop_time);
 
         core(const algobox::vector<T>& vector);
+
+        core(const std::vector<T>& vector);
         
         core(const std::initializer_list<T>& vector);
 
@@ -150,6 +152,10 @@ algobox::core<T>::core(const algobox::vector<T>& vector, const float loop_time) 
 
 template <typename T>
 algobox::core<T>::core(const algobox::vector<T>& vector) :
+    core(vector, {}, 720.0f, 720.0f, 1.0f) {}
+
+template <typename T>
+algobox::core<T>::core(const std::vector<T>& vector) :
     core(vector, {}, 720.0f, 720.0f, 1.0f) {}
 
 template <typename T>
