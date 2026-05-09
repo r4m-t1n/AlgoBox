@@ -210,7 +210,7 @@ void algobox::vector<T>::erase(size_t pos){
     data[_size-1] = 0;
     _size--;
 
-    if (mode == SORT){
+    if (mode != NONE){
         copies.emplace(std::vector<T>(data, data+_size), algobox::empty_element,
                         pos, algobox::empty_element);
     }
