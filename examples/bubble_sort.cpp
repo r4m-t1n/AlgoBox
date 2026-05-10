@@ -3,9 +3,11 @@
 
 void bubble_sort(algobox::core<int>& c){
     for (int i=0; i<c.v.size()-1; i++){
-        for (int j=0; j<c.v.size()-i-1; j++){
-            if (c.v[j] > c.v[j+1]){
-                c.v.swap(j, j+1);
+        for (auto it = c.v.begin(); it != c.v.end()-1; ++it){
+            auto next_it = it;
+            ++next_it;
+            if (c.v.is_greater(it, next_it)){
+                c.v.swap(it, next_it);
             }
         }
     }
