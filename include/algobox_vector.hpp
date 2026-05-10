@@ -33,6 +33,32 @@ class algobox::vector{
         T& operator[](size_t index);
         const T& operator[](size_t index) const;
 
+        struct iterator{
+            using pointer = T*;
+            using reference = T&;
+
+            algobox::vector<T>* _parent;
+            pointer _ptr;
+            iterator(pointer ptr, algobox::vector<T>* parent);
+
+            reference operator*() const;
+            pointer operator->();
+
+            iterator& operator++();
+            iterator operator++(int);
+
+            iterator operator-(size_t n);
+            iterator operator-(int n);
+            iterator operator+(size_t n);
+
+            operator bool();
+
+            bool operator==(const iterator& other) const;
+            bool operator!=(const iterator& other) const;
+
+            T get() const;
+        };
+
         void push_back(T element);
         void erase(size_t pos);
         void clear();
@@ -44,7 +70,12 @@ class algobox::vector{
         T get_min();
         T at(size_t index);
         void swap(size_t index_1, size_t index_2);
+        void swap(iterator it1, iterator it2);
+        bool is_greater(iterator it1, iterator it2);
         const T* get_data_ptr() const;
+
+        iterator begin();
+        iterator end();
 
         mutable std::queue<size_t> nodes;
         mutable std::queue<algobox::State<T>> copies;
@@ -290,6 +321,118 @@ void algobox::vector<T>::swap(size_t green_index, size_t red_index){
     data[red_index] = tmp;
     copies.emplace(std::vector<T>(data, data + _size), algobox::empty_element, green_index, red_index);
 }
+
+template <typename T>
+void algobox::vector<T>::swap(iterator it1, iterator it2){
+
+    size_t green_index = it1._ptr - data;
+    size_t red_index = it2._ptr - data;
+
+    swap(green_index, red_index);
+}
+
+template <typename T>
+bool algobox::vector<T>::is_greater(iterator it1, iterator it2){
+
+    return it1.get() > it2.get();
+}
+
+
+template <typename T>
+algobox::vector<T>::iterator::iterator(pointer ptr, algobox::vector<T>* parent) :
+    _ptr(ptr), _parent(parent) {}
+
+template <typename T>
+typename algobox::vector<T>::iterator::reference
+algobox::vector<T>::iterator::operator*() const{
+    size_t index = _ptr - _parent->data;
+    if (_parent && _parent->mode != NONE){
+        if (_parent->mode == SEARCH){
+            if (_parent->nodes.empty()){
+                _parent->nodes.push(index);
+            }
+            _parent->nodes.back() = index;
+        }
+
+        if (_parent->mode == SORT){
+            if (_parent->copies.empty() || _parent->copies.back().index != index)
+                _parent->copies.emplace(
+                    std::vector<T>(_parent->data, _parent->data + _parent->_size), index,
+                    algobox::empty_element, algobox::empty_element);
+        }
+    }
+    return *_ptr;
+}
+
+template <typename T>
+typename algobox::vector<T>::iterator::pointer
+algobox::vector<T>::iterator::operator->(){
+    return _ptr;
+}
+
+template <typename T>
+typename algobox::vector<T>::iterator&
+algobox::vector<T>::iterator::operator++(){
+    _ptr++;
+    return *this;
+}
+
+template <typename T>
+typename algobox::vector<T>::iterator
+algobox::vector<T>::iterator::operator++(int){
+    iterator tmp = *this;
+    ++(*this);
+    return tmp;
+}
+
+template <typename T>
+typename algobox::vector<T>::iterator
+algobox::vector<T>::iterator::operator-(size_t n){
+    return iterator(_ptr - n, _parent);
+}
+template <typename T>
+typename algobox::vector<T>::iterator
+algobox::vector<T>::iterator::operator-(int n){
+    return iterator(_ptr - n, _parent);
+}
+
+template <typename T>
+typename algobox::vector<T>::iterator
+algobox::vector<T>::iterator::operator+(size_t n){
+    return iterator(_ptr + n, _parent);
+}
+
+template <typename T>
+algobox::vector<T>::iterator::operator bool(){
+    if (!_parent || !_ptr) return false;
+    return (_ptr >= _parent->data) && (_ptr < (_parent->data+_parent->_size-1));
+}
+
+template <typename T>
+bool algobox::vector<T>::iterator::operator==(const iterator& other) const{
+    return _ptr == other._ptr;
+}
+
+template <typename T>
+bool algobox::vector<T>::iterator::operator!=(const iterator& other) const{
+    return _ptr != other._ptr;
+}
+
+template <typename T>
+typename algobox::vector<T>::iterator algobox::vector<T>::begin(){
+    return iterator(data, this);
+}
+
+template <typename T>
+typename algobox::vector<T>::iterator algobox::vector<T>::end(){
+    return iterator(data + _size, this);
+}
+
+template <typename T>
+T algobox::vector<T>::iterator::get() const{
+    return *_ptr;
+}
+
 
 template <typename T>
 T& algobox::vector<T>::operator[](size_t index){
